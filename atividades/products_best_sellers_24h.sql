@@ -1,7 +1,10 @@
 CREATE OR REPLACE VIEW products_best_sellers_24h AS
-	SELECT products.id, products.name, SUM(order_items.quantity) AS quantity
-	FROM products JOIN order_items ON order_items.product_id = products.id
-	JOIN orders ON orders.id = order_items.order_id
-	WHERE orders.status = 'paid' AND orders.paid_at >= DATE_SUB(NOW(), INTERVAL 1 DAY)
-	GROUP BY products.id, products.name HAVING SUM(order_items.quantity) > 25
-	ORDER BY quantity DESC;
+SELECT 
+	p.id,
+	p.name,
+	SUM(oi.quantity) AS quantity
+FROM products AS p INNER JOIN order_items AS oi ON p.id = oi.product_id
+INNER JOIN orders AS o ON o.id = oi.order_id
+WHERE o.status = 'paid' AND o.paid_at >= DATE_SUB(NOW(), INTERVAL 1 DAY)
+GROUP BY p.id, p.name HAVING SUM(oi.quantity) > 25
+ORDER BY quantity DESC;
